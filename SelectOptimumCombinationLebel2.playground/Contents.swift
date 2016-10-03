@@ -37,14 +37,12 @@ struct Menu {
 
 
 enum Food {
-    case pizza
-    case sideMenu
+    case pizza, sideMenu
 }
 
 
 enum PizzaSize {
-    case middle
-    case large
+    case middle, large
     
     func getString() -> String {
         switch self {
@@ -59,8 +57,7 @@ enum PizzaSize {
 
 
 enum Pizza {
-    case genovese
-    case margherita
+    case genovese, margherita
     
     func getPrice(size: PizzaSize) -> Int {
         switch self {
@@ -96,9 +93,7 @@ enum Pizza {
 
 
 enum SideMenu {
-    case frenchFries
-    case greenSalad
-    case caesarSalad
+    case frenchFries, greenSalad, caesarSalad
     
     func getPrice() -> Int {
         switch self {
@@ -208,10 +203,7 @@ struct Coupons {
 }
 
 enum Coupon: Int {
-    case coupon1
-    case coupon2
-    case coupon3
-    case pizzaCoupon
+    case coupon1, coupon2, coupon3, pizzaCoupon
     
     // 要素数を返す -> Coupon: Int
     static var count: Int {
