@@ -123,13 +123,13 @@ class Order {
     var orderArray: [Menu] = []
     
     // ピザをオーダーを追加するメソッド
-    func pizzaOrder(name: Pizza, size: PizzaSize, number: Int) {
+    func PizzaOrder(name: Pizza, size: PizzaSize, number: Int) {
         let order = Menu(name: name, size: size, number: number)
         orderArray.append(order)
     }
     
     // サイドメニューをオーダーするメソッド
-    func sideMenuOrder(name: SideMenu, number: Int) {
+    func SideMenuOrder(name: SideMenu, number: Int) {
         let order = Menu(name: name, number: number)
         orderArray.append(order)
     }
@@ -407,11 +407,11 @@ class SelectOptimumCombination {
 // テストコード
 
 let myOrder = Order()
-myOrder.pizzaOrder(name: .genovese, size: .large, number: 1)
-myOrder.sideMenuOrder(name: .frenchFries, number: 1)
+myOrder.PizzaOrder(name: .genovese, size: .large, number: 1)
+myOrder.SideMenuOrder(name: .frenchFries, number: 1)
 //myOrder.SideMenuOrder(name: .GreenSalad, number: 1)
-myOrder.sideMenuOrder(name: .caesarSalad, number: 1)
-myOrder.pizzaOrder(name: .margherita, size: .middle, number: 1)
+myOrder.SideMenuOrder(name: .caesarSalad, number: 1)
+myOrder.PizzaOrder(name: .margherita, size: .middle, number: 1)
 
 myOrder.orderCheck()
 myOrder.getTotalFee()
