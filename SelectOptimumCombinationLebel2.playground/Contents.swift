@@ -15,22 +15,22 @@ struct Menu {
     
     // オーダーがピザの場合
     init(name: Pizza, size: PizzaSize, number: Int) {
-        self.type = Food.pizza
+        type = Food.pizza
         self.number = number
         
-        self.detail = name.getString() + " " + size.getString()
+        detail = name.getString() + " " + size.getString()
         
-        self.price = name.getPrice(size: size)
+        price = name.getPrice(size: size)
     }
     
     // オーダーがサイドメニューの場合
     init(name: SideMenu, number: Int) {
-        self.type = Food.sideMenu
+        type = Food.sideMenu
         self.number = number
         
-        self.detail = name.getString()
+        detail = name.getString()
         
-        self.price = name.getPrice()
+        price = name.getPrice()
     }
     
 }
@@ -164,27 +164,27 @@ struct Coupons {
     var numberArray: [Int]
     
     init() {
-        self.numberArray = Array(repeating: 0, count: Coupon.count)
+        numberArray = Array(repeating: 0, count: Coupon.count)
     }
     
     init(coupon1: Int, coupon2: Int, coupon3: Int, pizzaCoupon: Int) {
-        self.numberArray = [coupon1, coupon2, coupon3, pizzaCoupon]
+        numberArray = [coupon1, coupon2, coupon3, pizzaCoupon]
     }
     
     // クーポンの枚数を変更する
     mutating func alterValue(typeOf coupon: Coupon, value: Int) {
-        self.numberArray[coupon.hashValue] = value
+        numberArray[coupon.hashValue] = value
     }
     
     // 指定したクーポンの枚数を返す
     func getNumber(_ coupon: Coupon) -> Int {
-        return self.numberArray[coupon.hashValue]
+        return numberArray[coupon.hashValue]
     }
     
     // クーポンの合計枚数を返す
     func countAll() -> Int {
         var count = 0
-        for i in self.numberArray {
+        for i in numberArray {
             count += i
         }
         return count
@@ -195,7 +195,7 @@ struct Coupons {
         var total = 0
         for i in 0..<Coupon.count {
             let discount = Coupon.init(rawValue: i)?.getDiscountValue()
-            total += discount! * self.numberArray[i]
+            total += discount! * numberArray[i]
         }
         return total
     }
@@ -256,33 +256,31 @@ class SelectOptimumCombination {
     // 支払金額
     var pay: Int
     // 合計割引額
-    var discount: Int
+    var discount: Int = 0
     // 使用したクーポン組み合わせ
     var selectedCoupons: Coupons
     
     
     init(order: Order, coupons: Coupons) {
-        self.myOrder = order
-        self.myCoupons = coupons
+        myOrder = order
+        myCoupons = coupons
         
-        self.amount = order.getTotalFee()
-        self.pay = self.amount
-        self.discount = 0
-        self.selectedCoupons = Coupons()     // [0, 0, 0, 0]
+        amount = order.getTotalFee()
+        pay = amount
+        selectedCoupons = Coupons()     // [0, 0, 0, 0]
     }
     
     // クーポン再選択時の初期化用メソッド
     func cancelSelect() {
-        self.pay = self.amount
-        self.discount = 0
-        self.selectedCoupons = Coupons()
+        pay = amount
+        selectedCoupons = Coupons()
     }
     
     // あるクーポンの組み合わせをもとにシミュレーション（デタラメな値を入れないように）
     private func simulateOf(coupons: Coupons) {
-        self.discount = coupons.totalDiscount()
-        self.pay = self.amount - self.discount
-        self.selectedCoupons = coupons
+        discount = coupons.totalDiscount()
+        pay = amount - discount
+        selectedCoupons = coupons
     }
     
     // 最適なクーポンの組み合わせを返す
@@ -297,10 +295,10 @@ class SelectOptimumCombination {
         if isCanUsePizzaCoupon() {
             // 使った場合と使わなかった場合で支払額が低い方を採用する
             useAllCoupon()
-            let selectedCoupons1 = self.selectedCoupons
+            let selectedCoupons1 = selectedCoupons
             
             useOnlyNormalCoupon()
-            let selectedCoupons2 = self.selectedCoupons
+            let selectedCoupons2 = selectedCoupons
             
             simulateOf(coupons: compareCoupons(coupons1: selectedCoupons1, coupons2: selectedCoupons2))
             
@@ -309,7 +307,7 @@ class SelectOptimumCombination {
             useOnlyNormalCoupon()
         }
         
-        return self.selectedCoupons.numberArray
+        return selectedCoupons.numberArray
     }
     
     // 使用するクーポンと持っている枚数を渡して値引きするメソッド
@@ -320,12 +318,12 @@ class SelectOptimumCombination {
         
         if number != 0 {
             // クーポンがなくなるか、支払額が値引額を下回るか、制限枚数使用するまでクーポンを使う
-            while (couponCount != 0) && (self.pay >= value) && ((number - couponCount) != coupon.getLimitNumber()) {
+            while (couponCount != 0) && (pay >= value) && ((number - couponCount) != coupon.getLimitNumber()) {
                 // クーポンが使用できる条件を満たした上で、使用した場合のpayとdiscountを比較する
-                if (self.pay - value) >= (self.discount + value) {
+                if (pay - value) >= (discount + value) {
                     // 使用可能
-                    self.pay -= value
-                    self.discount += value
+                    pay -= value
+                    discount += value
                     couponCount -= 1
                 } else {
                     // 使用不可
@@ -341,7 +339,7 @@ class SelectOptimumCombination {
     // クーポンが使えるかどうか
     func isCanUseCoupons() -> Bool {
         // 1000円以下はクーポン対象外
-        if self.amount <= 1000 {
+        if amount <= 1000 {
             return false
         } else {
             return true
@@ -350,7 +348,7 @@ class SelectOptimumCombination {
     
     // ピザクーポンが使えるかどうかを返す
     func isCanUsePizzaCoupon() -> Bool {
-        for menu in self.myOrder.orderArray {
+        for menu in myOrder.orderArray {
             if menu.type == Food.pizza {
                 return true
             }
@@ -361,7 +359,7 @@ class SelectOptimumCombination {
     // 使用するクーポンの合計枚数を得る
     func countCoupons() -> Int {
         var count = 0
-        for i in self.selectedCoupons.numberArray {
+        for i in selectedCoupons.numberArray {
             count += i
         }
         return count
