@@ -14,23 +14,23 @@ struct Menu {
     var number: Int
     
     // オーダーがピザの場合
-    init(name: Pizza, size: PizzaSize, number: Int) {
+    init(pizza: Pizza, size: PizzaSize, number: Int) {
         type = Food.pizza
         self.number = number
         
-        detail = name.getString() + " " + size.getString()
+        detail = pizza.name + " " + size.name
         
-        price = name.getPrice(size: size)
+        price = pizza.getPrice(size: size)
     }
     
     // オーダーがサイドメニューの場合
-    init(name: SideMenu, number: Int) {
+    init(sideMenu: SideMenu, number: Int) {
         type = Food.sideMenu
         self.number = number
         
-        detail = name.getString()
+        detail = sideMenu.name
         
-        price = name.getPrice()
+        price = sideMenu.price
     }
     
 }
@@ -44,7 +44,7 @@ enum Food {
 enum PizzaSize {
     case middle, large
     
-    func getString() -> String {
+    var name: String {
         switch self {
         case .middle:
             return "Middle"
@@ -80,7 +80,7 @@ enum Pizza {
         }
     }
     
-    func getString() -> String {
+    var name: String {
         switch self {
         case .genovese:
             return "Genovese"
@@ -95,7 +95,7 @@ enum Pizza {
 enum SideMenu {
     case frenchFries, greenSalad, caesarSalad
     
-    func getPrice() -> Int {
+    var price: Int {
         switch self {
         case .frenchFries:
             return 400
@@ -106,7 +106,7 @@ enum SideMenu {
         }
     }
     
-    func getString() -> String {
+    var name: String {
         switch self {
         case .frenchFries:
             return "FrenchFries"
@@ -124,18 +124,18 @@ class Order {
     
     // ピザをオーダーを追加するメソッド
     func pizzaOrder(name: Pizza, size: PizzaSize, number: Int) {
-        let order = Menu(name: name, size: size, number: number)
+        let order = Menu(pizza: name, size: size, number: number)
         orderArray.append(order)
     }
     
     // サイドメニューをオーダーするメソッド
     func sideMenuOrder(name: SideMenu, number: Int) {
-        let order = Menu(name: name, number: number)
+        let order = Menu(sideMenu: name, number: number)
         orderArray.append(order)
     }
     
     // オーダーの合計金額を返すメソッド
-    func getTotalFee() -> Int {
+    var totalFee: Int {
         
         var total: Int = 0
         
@@ -177,12 +177,12 @@ struct Coupons {
     }
     
     // 指定したクーポンの枚数を返す
-    func getNumber(_ coupon: Coupon) -> Int {
+    func getNumber(of coupon: Coupon) -> Int {
         return numberArray[coupon.hashValue]
     }
     
     // クーポンの合計枚数を返す
-    func countAll() -> Int {
+    var countAll: Int {
         var count = 0
         for i in numberArray {
             count += i
@@ -191,10 +191,10 @@ struct Coupons {
     }
     
     // クーポンの合計値引き額を返す
-    func totalDiscount() -> Int {
+    var totalDiscount: Int {
         var total = 0
         for i in 0..<Coupon.count {
-            let discount = Coupon.init(rawValue: i)?.getDiscountValue()
+            let discount = Coupon.init(rawValue: i)?.discountValue
             total += discount! * numberArray[i]
         }
         return total
@@ -215,7 +215,7 @@ enum Coupon: Int {
         return i
     }
     
-    func getDiscountValue() -> Int {
+    var discountValue: Int {
         switch self {
         case .coupon1:
             return 500
@@ -228,7 +228,7 @@ enum Coupon: Int {
         }
     }
     
-    func getLimitNumber() -> Int {
+    var limitNumber: Int {
         switch self {
         case .coupon1:
             return 2
@@ -265,7 +265,7 @@ class SelectOptimumCombination {
         myOrder = order
         myCoupons = coupons
         
-        amount = order.getTotalFee()
+        amount = order.totalFee
         pay = amount
         selectedCoupons = Coupons()     // [0, 0, 0, 0]
     }
@@ -278,21 +278,21 @@ class SelectOptimumCombination {
     
     // あるクーポンの組み合わせをもとにシミュレーション（デタラメな値を入れないように）
     private func simulateOf(coupons: Coupons) {
-        discount = coupons.totalDiscount()
+        discount = coupons.totalDiscount
         pay = amount - discount
         selectedCoupons = coupons
     }
     
     // 最適なクーポンの組み合わせを返す
-    func selectCoupons() -> [Int] {
+    var selectCoupons: [Int] {
         
-        if isCanUseCoupons() != true {
+        if isCanUseCoupons != true {
             let noCoupon = Array(repeating: 0, count: Coupon.count)
             return noCoupon
         }
         
         // ピザクーポンが使えるなら
-        if isCanUsePizzaCoupon() {
+        if isCanUsePizzaCoupon {
             // 使った場合と使わなかった場合で支払額が低い方を採用する
             useAllCoupon()
             let selectedCoupons1 = selectedCoupons
@@ -314,11 +314,11 @@ class SelectOptimumCombination {
     func useCoupon(typeOf coupon: Coupon, number: Int) {
         
         var couponCount = number
-        let value = coupon.getDiscountValue()
+        let value = coupon.discountValue
         
         if number != 0 {
             // クーポンがなくなるか、支払額が値引額を下回るか、制限枚数使用するまでクーポンを使う
-            while (couponCount != 0) && (pay >= value) && ((number - couponCount) != coupon.getLimitNumber()) {
+            while (couponCount != 0) && (pay >= value) && ((number - couponCount) != coupon.discountValue) {
                 // クーポンが使用できる条件を満たした上で、使用した場合のpayとdiscountを比較する
                 if (pay - value) >= (discount + value) {
                     // 使用可能
@@ -337,7 +337,7 @@ class SelectOptimumCombination {
     }
     
     // クーポンが使えるかどうか
-    func isCanUseCoupons() -> Bool {
+    var isCanUseCoupons: Bool {
         // 1000円以下はクーポン対象外
         if amount <= 1000 {
             return false
@@ -347,7 +347,7 @@ class SelectOptimumCombination {
     }
     
     // ピザクーポンが使えるかどうかを返す
-    func isCanUsePizzaCoupon() -> Bool {
+    var isCanUsePizzaCoupon: Bool {
         for menu in myOrder.orderArray {
             if menu.type == Food.pizza {
                 return true
@@ -357,7 +357,7 @@ class SelectOptimumCombination {
     }
     
     // 使用するクーポンの合計枚数を得る
-    func countCoupons() -> Int {
+    var countCoupons: Int {
         var count = 0
         for i in selectedCoupons.numberArray {
             count += i
@@ -368,9 +368,9 @@ class SelectOptimumCombination {
     // 基本クーポンのみを使用
     func useOnlyNormalCoupon() {
         cancelSelect()
-        useCoupon(typeOf: .coupon1, number: myCoupons.getNumber(.coupon1))
-        useCoupon(typeOf: .coupon2, number: myCoupons.getNumber(.coupon2))
-        useCoupon(typeOf: .coupon3, number: myCoupons.getNumber(.coupon3))
+        useCoupon(typeOf: .coupon1, number: myCoupons.getNumber(of: .coupon1))
+        useCoupon(typeOf: .coupon2, number: myCoupons.getNumber(of: .coupon2))
+        useCoupon(typeOf: .coupon3, number: myCoupons.getNumber(of: .coupon3))
 //        self.selectedCoupons.alterValue(typeOf: .pizzaCoupon, value: 0)
     }
     
@@ -378,21 +378,21 @@ class SelectOptimumCombination {
     func useAllCoupon() {
         cancelSelect()
         // 優先的にピザクーポンを使う
-        useCoupon(typeOf: .pizzaCoupon, number: myCoupons.getNumber(.pizzaCoupon))
-        useCoupon(typeOf: .coupon1, number: myCoupons.getNumber(.coupon1))
-        useCoupon(typeOf: .coupon2, number: myCoupons.getNumber(.coupon2))
-        useCoupon(typeOf: .coupon3, number: myCoupons.getNumber(.coupon3))
+        useCoupon(typeOf: .pizzaCoupon, number: myCoupons.getNumber(of: .pizzaCoupon))
+        useCoupon(typeOf: .coupon1, number: myCoupons.getNumber(of: .coupon1))
+        useCoupon(typeOf: .coupon2, number: myCoupons.getNumber(of: .coupon2))
+        useCoupon(typeOf: .coupon3, number: myCoupons.getNumber(of: .coupon3))
     }
     
     // 2つのクーポンの組み合わせのうち(値引額->大)かつ(枚数->少)の方を返す
     func compareCoupons(coupons1 former: Coupons, coupons2 later: Coupons) -> Coupons {
         
-        if former.totalDiscount() > later.totalDiscount() {
+        if former.totalDiscount > later.totalDiscount {
             return former
         }
-        else if former.totalDiscount() == later.totalDiscount() {
+        else if former.totalDiscount == later.totalDiscount {
             // 支払額が同じであれば、合計枚数が少ない方を採用する
-            if former.countAll() < later.countAll() {
+            if former.countAll < later.countAll {
                 return former
             }
         }
@@ -412,13 +412,13 @@ myOrder.sideMenuOrder(name: .caesarSalad, number: 1)
 myOrder.pizzaOrder(name: .margherita, size: .middle, number: 1)
 
 myOrder.orderCheck()
-myOrder.getTotalFee()
+myOrder.totalFee
 
 let myCoupons = Coupons(coupon1: 3, coupon2: 3, coupon3: 4, pizzaCoupon: 2)
 
 let mySelect = SelectOptimumCombination(order: myOrder, coupons: myCoupons)
 //mySelect.useCoupon(typeOf: .coupon1, number: 3)
-mySelect.selectCoupons()
+mySelect.selectCoupons
 //mySelect.useCoupon(typeOf: .coupon2, number: 3)
 //mySelect.useOnlyNormalCoupon()
 //mySelect.useAllCoupon()
