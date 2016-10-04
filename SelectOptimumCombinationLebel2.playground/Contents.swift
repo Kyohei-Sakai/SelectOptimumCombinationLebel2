@@ -184,9 +184,13 @@ struct Coupons {
     // クーポンの合計枚数を返す
     func countAll() -> Int {
         var count = 0
-        for i in numberArray {
-            count += i
+        
+        numberArray.forEach { number in
+            count += number
         }
+        
+        numberArray.forEach { count += $0 }
+        
         return count
     }
     
@@ -359,9 +363,13 @@ class SelectOptimumCombination {
     // 使用するクーポンの合計枚数を得る
     func countCoupons() -> Int {
         var count = 0
-        for i in selectedCoupons.numberArray {
-            count += i
-        }
+        
+//        selectedCoupons.numberArray.forEach { number in
+//            count += number
+//        }
+        
+        selectedCoupons.numberArray.forEach { count += $0 }
+        
         return count
     }
     
