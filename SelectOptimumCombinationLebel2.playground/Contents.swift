@@ -252,7 +252,7 @@ class SelectOptimumCombination {
     let myCoupons: Coupons
     
     // オーダーの合計金額
-    let amount: Int
+    private let amount: Int
     // 支払金額
     var pay: Int
     // 合計割引額
@@ -271,7 +271,7 @@ class SelectOptimumCombination {
     }
     
     // クーポン再選択時の初期化用メソッド
-    func cancelSelect() {
+    private func cancelSelect() {
         pay = amount
         selectedCoupons = Coupons()
     }
@@ -311,7 +311,7 @@ class SelectOptimumCombination {
     }
     
     // 使用するクーポンと持っている枚数を渡して値引きするメソッド
-    func useCoupon(typeOf coupon: Coupon, number: Int) {
+    private func useCoupon(typeOf coupon: Coupon, number: Int) {
         
         var couponCount = number
         let value = coupon.getDiscountValue()
@@ -337,7 +337,7 @@ class SelectOptimumCombination {
     }
     
     // クーポンが使えるかどうか
-    func isCanUseCoupons() -> Bool {
+    private func isCanUseCoupons() -> Bool {
         // 1000円以下はクーポン対象外
         if amount <= 1000 {
             return false
@@ -347,7 +347,7 @@ class SelectOptimumCombination {
     }
     
     // ピザクーポンが使えるかどうかを返す
-    func isCanUsePizzaCoupon() -> Bool {
+    private func isCanUsePizzaCoupon() -> Bool {
         for menu in myOrder.orderArray {
             if menu.type == Food.pizza {
                 return true
@@ -357,7 +357,7 @@ class SelectOptimumCombination {
     }
     
     // 使用するクーポンの合計枚数を得る
-    func countCoupons() -> Int {
+    private func countCoupons() -> Int {
         var count = 0
         for i in selectedCoupons.numberArray {
             count += i
@@ -366,7 +366,7 @@ class SelectOptimumCombination {
     }
     
     // 基本クーポンのみを使用
-    func useOnlyNormalCoupon() {
+    private func useOnlyNormalCoupon() {
         cancelSelect()
         useCoupon(typeOf: .coupon1, number: myCoupons.getNumber(.coupon1))
         useCoupon(typeOf: .coupon2, number: myCoupons.getNumber(.coupon2))
@@ -375,7 +375,7 @@ class SelectOptimumCombination {
     }
     
     // 全てのクーポンを使用
-    func useAllCoupon() {
+    private func useAllCoupon() {
         cancelSelect()
         // 優先的にピザクーポンを使う
         useCoupon(typeOf: .pizzaCoupon, number: myCoupons.getNumber(.pizzaCoupon))
@@ -385,7 +385,7 @@ class SelectOptimumCombination {
     }
     
     // 2つのクーポンの組み合わせのうち(値引額->大)かつ(枚数->少)の方を返す
-    func compareCoupons(coupons1 former: Coupons, coupons2 later: Coupons) -> Coupons {
+    private func compareCoupons(coupons1 former: Coupons, coupons2 later: Coupons) -> Coupons {
         
         if former.totalDiscount() > later.totalDiscount() {
             return former
@@ -424,10 +424,6 @@ mySelect.selectCoupons()
 //mySelect.useAllCoupon()
 print("支払額: \(mySelect.pay)")
 print("値引額: \(mySelect.discount)")
-
-
-
-
 
 
 
