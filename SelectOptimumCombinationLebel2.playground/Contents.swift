@@ -184,9 +184,13 @@ struct Coupons {
     // クーポンの合計枚数を返す
     var countAll: Int {
         var count = 0
-        for i in numberArray {
-            count += i
-        }
+        
+//        numberArray.forEach { number in
+//            count += number
+//        }
+        
+        numberArray.forEach { count += $0 }
+        
         return count
     }
     
@@ -197,6 +201,7 @@ struct Coupons {
             let discount = Coupon.init(rawValue: i)?.discountValue
             total += discount! * numberArray[i]
         }
+        
         return total
     }
     
@@ -359,9 +364,13 @@ class SelectOptimumCombination {
     // 使用するクーポンの合計枚数を得る
     var countCoupons: Int {
         var count = 0
-        for i in selectedCoupons.numberArray {
-            count += i
-        }
+        
+//        selectedCoupons.numberArray.forEach { number in
+//            count += number
+//        }
+        
+        selectedCoupons.numberArray.forEach { count += $0 }
+        
         return count
     }
     
@@ -424,10 +433,6 @@ mySelect.selectCoupons
 //mySelect.useAllCoupon()
 print("支払額: \(mySelect.pay)")
 print("値引額: \(mySelect.discount)")
-
-
-
-
 
 
 
