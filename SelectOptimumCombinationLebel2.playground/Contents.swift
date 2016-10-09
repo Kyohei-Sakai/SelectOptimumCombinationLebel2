@@ -286,7 +286,7 @@ class SelectOptimumCombination {
     // 最適なクーポンの組み合わせを返す
     func selectCoupons() -> [Int] {
         
-        if isCanUseCoupons() == false { // 変更を確認
+        if !isCanUseCoupons() {
             let noCoupon = Array(repeating: 0, count: Coupon.count)
             return noCoupon
         }
