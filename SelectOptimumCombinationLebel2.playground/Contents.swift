@@ -15,7 +15,7 @@ fileprivate struct Menu {
     
     // オーダーがピザの場合
     init(pizza: Pizza, size: PizzaSize, number: Int) {
-        type = Food.pizza
+        type = .pizza
         self.number = number
         
         detail = pizza.name + " " + size.name
@@ -25,7 +25,7 @@ fileprivate struct Menu {
     
     // オーダーがサイドメニューの場合
     init(sideMenu: SideMenu, number: Int) {
-        type = Food.sideMenu
+        type = .sideMenu
         self.number = number
         
         detail = sideMenu.name
@@ -137,7 +137,7 @@ class Order {
     // オーダーの合計金額を返すメソッド
     fileprivate var totalFee: Int {
         
-        var total: Int = 0
+        var total = 0
         
         for i in orderArray {
             total += i.price * i.number
@@ -256,7 +256,7 @@ class SelectOptimumCombination {
     // 支払金額
     private var pay: Int
     // 合計割引額
-    private var discount: Int = 0
+    private var discount = 0
     // 使用したクーポン組み合わせ
     private var selectedCoupons: Coupons
     
