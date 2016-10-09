@@ -15,7 +15,11 @@ struct Menu {
     
     // オーダーがピザの場合
     init(name: Pizza, size: PizzaSize, number: Int) {
-        type = .pizza
+<<<<<<< HEAD
+        self.type = .pizza
+=======
+        type = Food.pizza
+>>>>>>> master
         self.number = number
         
         detail = name.getString() + " " + size.getString()
@@ -25,7 +29,11 @@ struct Menu {
     
     // オーダーがサイドメニューの場合
     init(name: SideMenu, number: Int) {
-        type = .sideMenu
+<<<<<<< HEAD
+        self.type = .sideMenu
+=======
+        type = Food.sideMenu
+>>>>>>> master
         self.number = number
         
         detail = name.getString()
@@ -348,8 +356,13 @@ class SelectOptimumCombination {
     
     // ピザクーポンが使えるかどうかを返す
     func isCanUsePizzaCoupon() -> Bool {
+<<<<<<< HEAD
+        for menu in self.myOrder.orderArray {
+            if menu.type == .pizza {
+=======
         for menu in myOrder.orderArray {
             if menu.type == Food.pizza {
+>>>>>>> master
                 return true
             }
         }
