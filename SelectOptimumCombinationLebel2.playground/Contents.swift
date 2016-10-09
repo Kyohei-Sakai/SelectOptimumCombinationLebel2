@@ -7,11 +7,11 @@ import UIKit
 
 // MARK: - オーダーに関する処理と商品情報
 
-struct Menu {
-    var type: Food
-    var detail: String
-    var price: Int
-    var number: Int
+fileprivate struct Menu {
+    fileprivate var type: Food
+    fileprivate var detail: String
+    fileprivate var price: Int
+    fileprivate var number: Int
     
     // オーダーがピザの場合
     init(name: Pizza, size: PizzaSize, number: Int) {
@@ -36,7 +36,7 @@ struct Menu {
 }
 
 
-enum Food {
+fileprivate enum Food {
     case pizza, sideMenu
 }
 
@@ -44,7 +44,7 @@ enum Food {
 enum PizzaSize {
     case middle, large
     
-    func getString() -> String {
+    fileprivate func getString() -> String {
         switch self {
         case .middle:
             return "Middle"
@@ -59,7 +59,7 @@ enum PizzaSize {
 enum Pizza {
     case genovese, margherita
     
-    func getPrice(size: PizzaSize) -> Int {
+    fileprivate func getPrice(size: PizzaSize) -> Int {
         switch self {
         case .genovese:
             
@@ -80,7 +80,7 @@ enum Pizza {
         }
     }
     
-    func getString() -> String {
+    fileprivate func getString() -> String {
         switch self {
         case .genovese:
             return "Genovese"
@@ -95,7 +95,7 @@ enum Pizza {
 enum SideMenu {
     case frenchFries, greenSalad, caesarSalad
     
-    func getPrice() -> Int {
+    fileprivate func getPrice() -> Int {
         switch self {
         case .frenchFries:
             return 400
@@ -106,7 +106,7 @@ enum SideMenu {
         }
     }
     
-    func getString() -> String {
+    fileprivate func getString() -> String {
         switch self {
         case .frenchFries:
             return "FrenchFries"
@@ -120,7 +120,7 @@ enum SideMenu {
 
 
 class Order {
-    var orderArray: [Menu] = []
+    fileprivate var orderArray: [Menu] = []
     
     // ピザをオーダーを追加するメソッド
     func pizzaOrder(name: Pizza, size: PizzaSize, number: Int) {
@@ -135,7 +135,7 @@ class Order {
     }
     
     // オーダーの合計金額を返すメソッド
-    func getTotalFee() -> Int {
+    fileprivate func getTotalFee() -> Int {
         
         var total: Int = 0
         
@@ -147,7 +147,7 @@ class Order {
     }
     
     // オーダーをリストアップするメソッド
-    func orderCheck() {
+    fileprivate func orderCheck() {
         
         for i in orderArray {
             print("\(i.detail) ×\(i.number)")
@@ -161,7 +161,7 @@ class Order {
 // MARK: - クーポンの情報
 
 struct Coupons {
-    var numberArray: [Int]
+    fileprivate var numberArray: [Int]
     
     init() {
         numberArray = Array(repeating: 0, count: Coupon.count)
@@ -172,17 +172,17 @@ struct Coupons {
     }
     
     // クーポンの枚数を変更する
-    mutating func alterValue(typeOf coupon: Coupon, value: Int) {
+    fileprivate mutating func alterValue(typeOf coupon: Coupon, value: Int) {
         numberArray[coupon.hashValue] = value
     }
     
     // 指定したクーポンの枚数を返す
-    func getNumber(_ coupon: Coupon) -> Int {
+    fileprivate func getNumber(_ coupon: Coupon) -> Int {
         return numberArray[coupon.hashValue]
     }
     
     // クーポンの合計枚数を返す
-    func countAll() -> Int {
+    fileprivate func countAll() -> Int {
         return numberArray.reduce(0) { count, number in
             // (0)はcountの初期値
             // countに要素を加えた結果を新たにcountとする
@@ -191,7 +191,7 @@ struct Coupons {
     }
     
     // クーポンの合計値引き額を返す
-    func totalDiscount() -> Int {
+    fileprivate func totalDiscount() -> Int {
         var total = 0
         for i in 0..<Coupon.count {
             let discount = Coupon.init(rawValue: i)?.getDiscountValue()
@@ -202,11 +202,11 @@ struct Coupons {
     
 }
 
-enum Coupon: Int {
+fileprivate enum Coupon: Int {
     case coupon1, coupon2, coupon3, pizzaCoupon
     
     // 要素数を返す -> Coupon: Int
-    static var count: Int {
+    fileprivate static var count: Int {
         var i = 0
         // nilになるまでインスタンスを生成
         while let _ = Coupon(rawValue: i) {
@@ -215,7 +215,7 @@ enum Coupon: Int {
         return i
     }
     
-    func getDiscountValue() -> Int {
+    fileprivate func getDiscountValue() -> Int {
         switch self {
         case .coupon1:
             return 500
@@ -228,7 +228,7 @@ enum Coupon: Int {
         }
     }
     
-    func getLimitNumber() -> Int {
+    fileprivate func getLimitNumber() -> Int {
         switch self {
         case .coupon1:
             return 2
@@ -248,17 +248,17 @@ enum Coupon: Int {
 
 class SelectOptimumCombination {
     
-    let myOrder: Order
-    let myCoupons: Coupons
+    private let myOrder: Order
+    private let myCoupons: Coupons
     
     // オーダーの合計金額
     private let amount: Int
     // 支払金額
-    var pay: Int
+    private var pay: Int
     // 合計割引額
-    var discount: Int = 0
+    private var discount: Int = 0
     // 使用したクーポン組み合わせ
-    var selectedCoupons: Coupons
+    private var selectedCoupons: Coupons
     
     
     init(order: Order, coupons: Coupons) {
@@ -404,6 +404,8 @@ class SelectOptimumCombination {
 
 // テストコード
 
+/*
+// フル機能
 let myOrder = Order()
 myOrder.pizzaOrder(name: .genovese, size: .large, number: 1)
 myOrder.sideMenuOrder(name: .frenchFries, number: 1)
@@ -424,11 +426,21 @@ mySelect.selectCoupons()
 //mySelect.useAllCoupon()
 print("支払額: \(mySelect.pay)")
 print("値引額: \(mySelect.discount)")
+*/
 
 
+// アクセスレベルを意識して、最低限使う機能のみでテスト
 
+let myOrder = Order()
+myOrder.pizzaOrder(name: .genovese, size: .large, number: 1)
+myOrder.sideMenuOrder(name: .frenchFries, number: 1)
+myOrder.sideMenuOrder(name: .caesarSalad, number: 1)
+myOrder.pizzaOrder(name: .margherita, size: .middle, number: 1)
 
+let myCoupons = Coupons(coupon1: 3, coupon2: 3, coupon3: 4, pizzaCoupon: 2)
 
+let mySelect = SelectOptimumCombination(order: myOrder, coupons: myCoupons)
+mySelect.selectCoupons()
 
 
 
