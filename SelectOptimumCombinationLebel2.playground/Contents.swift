@@ -137,7 +137,7 @@ class Order {
     // オーダーの合計金額を返すメソッド
     func getTotalFee() -> Int {
         
-        var total: Int = 0
+        var total = 0
         
         for i in orderArray {
             total += i.price * i.number
@@ -256,7 +256,7 @@ class SelectOptimumCombination {
     // 支払金額
     var pay: Int
     // 合計割引額
-    var discount: Int = 0
+    var discount = 0
     // 使用したクーポン組み合わせ
     var selectedCoupons: Coupons
     
