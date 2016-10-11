@@ -7,62 +7,59 @@ import UIKit
 
 // MARK: - オーダーに関する処理と商品情報
 
-fileprivate struct Menu {
-    fileprivate var type: Food
-    fileprivate var detail: String
-    fileprivate var price: Int
-    fileprivate var number: Int
-    
-    // オーダーがピザの場合
-    init(pizza: Pizza, size: PizzaSize, number: Int) {
-        type = .pizza
-        self.number = number
-        
-        detail = pizza.name + " " + size.name
-        
-        price = pizza.getPrice(size: size)
-    }
-    
-    // オーダーがサイドメニューの場合
-    init(sideMenu: SideMenu, number: Int) {
-        type = .sideMenu
-        self.number = number
-        
-        detail = sideMenu.name
-        
-        price = sideMenu.price
-    }
-    
+//fileprivate struct Menu {
+//    fileprivate var type: Food
+//    fileprivate var detail: String
+//    fileprivate var price: Int
+//    fileprivate var number: Int
+//    
+//    // オーダーがピザの場合
+//    init(pizza: Pizza, size: PizzaSize, number: Int) {
+//        type = .pizza
+//        self.number = number
+//        
+//        detail = pizza.name + " " + size.name
+//        
+//        price = pizza.getPrice(size: size)
+//    }
+//    
+//    // オーダーがサイドメニューの場合
+//    init(sideMenu: SideMenu, number: Int) {
+//        type = .sideMenu
+//        self.number = number
+//        
+//        detail = sideMenu.name
+//        
+//        price = sideMenu.price
+//    }
+//    
+//}
+
+
+////////////////////////////
+
+protocol Food {
+    var name: String { get }
+    var price: Int { get }
 }
 
 
-fileprivate enum Food {
-    case pizza, sideMenu
-}
-
-
-enum PizzaSize {
-    case middle, large
+class Pizza: Food {
+    var type: PizzaType
+    var size: PizzaSize
     
-    fileprivate var name: String {
-        switch self {
-        case .middle:
-            return "Middle"
-        case .large:
-            return "Large"
+    var name: String {
+        switch self.type {
+        case .genovese:
+            return "Genovese"
+        case .margherita:
+            return "Margherita"
         }
     }
     
-}
-
-
-enum Pizza {
-    case genovese, margherita
-    
-    fileprivate func getPrice(size: PizzaSize) -> Int {
-        switch self {
+    var price: Int {
+        switch self.type {
         case .genovese:
-            
             switch size {
             case .middle:
                 return 1000
@@ -80,23 +77,27 @@ enum Pizza {
         }
     }
     
-    fileprivate var name: String {
-        switch self {
-        case .genovese:
-            return "Genovese"
-        case .margherita:
-            return "Margherita"
-        }
+    init(type: PizzaType, size: PizzaSize) {
+        self.type = type
+        self.size = size
+    }
+    
+    enum PizzaType {
+        case genovese, margherita
+    }
+    
+    enum PizzaSize {
+        case middle, large
     }
     
 }
 
 
-enum SideMenu {
-    case frenchFries, greenSalad, caesarSalad
+class SideMenu: Food {
+    var type: SideMenuType
     
-    fileprivate var price: Int {
-        switch self {
+    var price: Int {
+        switch self.type {
         case .frenchFries:
             return 400
         case .greenSalad:
@@ -106,8 +107,8 @@ enum SideMenu {
         }
     }
     
-    fileprivate var name: String {
-        switch self {
+    var name: String {
+        switch self.type {
         case .frenchFries:
             return "FrenchFries"
         case .greenSalad:
@@ -116,46 +117,44 @@ enum SideMenu {
             return "CaesarSalad"
         }
     }
-}
-
-
-class Order {
-    fileprivate var orderArray: [Menu] = []
     
-    // ピザをオーダーを追加するメソッド
-    func pizzaOrder(name: Pizza, size: PizzaSize, number: Int) {
-        let order = Menu(pizza: name, size: size, number: number)
-        orderArray.append(order)
+    init(type: SideMenuType) {
+        self.type = type
     }
     
-    // サイドメニューをオーダーするメソッド
-    func sideMenuOrder(name: SideMenu, number: Int) {
-        let order = Menu(sideMenu: name, number: number)
-        orderArray.append(order)
+    enum SideMenuType {
+        case frenchFries, greenSalad, caesarSalad
+    }
+    
+}
+
+class Order {
+    fileprivate var orderArray: [Food] = []
+    
+    // 商品の注文をする
+    func requestOrder(food: Food, number: Int) {
+        for _ in 0..<number {
+            orderArray.append(food)
+        }
     }
     
     // オーダーの合計金額を返すメソッド
     fileprivate var totalFee: Int {
-        
-        var total = 0
-        
-        for i in orderArray {
-            total += i.price * i.number
+        return orderArray.reduce(0) { total, food in
+            total + food.price
         }
-        
-        return total
     }
     
     // オーダーをリストアップするメソッド
     fileprivate func orderCheck() {
-        
         for i in orderArray {
-            print("\(i.detail) ×\(i.number)")
+            print("\(i.name)")
         }
-        
     }
     
 }
+
+////////////////////////////
 
 
 // MARK: - クーポンの情報
@@ -348,8 +347,15 @@ class SelectOptimumCombination {
     
     // ピザクーポンが使えるかどうかを返す
     private var isCanUsePizzaCoupon: Bool {
-        for menu in myOrder.orderArray {
-            if menu.type == Food.pizza {
+        for food in myOrder.orderArray {
+            // 型判定
+            // どっちでもできる
+//            if food is Pizza {
+//                return true
+//            }
+            
+            // foodがPizzaにキャストできれば変数のの中に格納される
+            if let _ = food as? Pizza {
                 return true
             }
         }
@@ -429,18 +435,24 @@ print("値引額: \(mySelect.discount)")
 */
 
 
-// アクセスレベルを意識して、最低限使う機能のみでテスト
+// テスト
+var orders: [Food] = []
 
+orders.append(Pizza(type: .genovese, size: .large))
+orders.append(SideMenu(type: .caesarSalad))
+
+
+// アクセスレベルを意識して、最低限使う機能のみでテスト
 let myOrder = Order()
-myOrder.pizzaOrder(name: .genovese, size: .large, number: 1)
-myOrder.sideMenuOrder(name: .frenchFries, number: 1)
-myOrder.sideMenuOrder(name: .caesarSalad, number: 1)
-myOrder.pizzaOrder(name: .margherita, size: .middle, number: 1)
+
+myOrder.requestOrder(food: Pizza(type: .genovese, size: .large), number: 1)
+myOrder.requestOrder(food: Pizza(type: .margherita, size: .middle), number: 2)
+myOrder.requestOrder(food: SideMenu(type: .frenchFries), number: 2)
 
 let myCoupons = Coupons(coupon1: 3, coupon2: 3, coupon3: 4, pizzaCoupon: 2)
 
 let mySelect = SelectOptimumCombination(order: myOrder, coupons: myCoupons)
-mySelect.selectCoupons()
+mySelect.selectCoupons
 
 
 
