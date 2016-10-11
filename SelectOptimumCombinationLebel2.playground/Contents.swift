@@ -129,25 +129,25 @@ class SideMenu: Food {
 }
 
 class Order {
-    fileprivate var orderArray: [Food] = []
+    fileprivate var orders: [Food] = []
     
     // 商品の注文をする
     func requestOrder(food: Food, number: Int) {
         for _ in 0..<number {
-            orderArray.append(food)
+            orders.append(food)
         }
     }
     
     // オーダーの合計金額を返すメソッド
     fileprivate var totalFee: Int {
-        return orderArray.reduce(0) { total, food in
+        return orders.reduce(0) { total, food in
             total + food.price
         }
     }
     
     // オーダーをリストアップするメソッド
     fileprivate func orderCheck() {
-        for i in orderArray {
+        for i in orders {
             print("\(i.name)")
         }
     }
@@ -160,29 +160,29 @@ class Order {
 // MARK: - クーポンの情報
 
 struct Coupons {
-    fileprivate var numberArray: [Int]
+    fileprivate var numbers: [Int]
     
     init() {
-        numberArray = Array(repeating: 0, count: Coupon.count)
+        numbers = Array(repeating: 0, count: Coupon.count)
     }
     
     init(coupon1: Int, coupon2: Int, coupon3: Int, pizzaCoupon: Int) {
-        numberArray = [coupon1, coupon2, coupon3, pizzaCoupon]
+        numbers = [coupon1, coupon2, coupon3, pizzaCoupon]
     }
     
     // クーポンの枚数を変更する
     fileprivate mutating func alterValue(typeOf coupon: Coupon, value: Int) {
-        numberArray[coupon.hashValue] = value
+        numbers[coupon.hashValue] = value
     }
     
     // 指定したクーポンの枚数を返す
     fileprivate func getNumber(of coupon: Coupon) -> Int {
-        return numberArray[coupon.hashValue]
+        return numbers[coupon.hashValue]
     }
     
     // クーポンの合計枚数を返す
     fileprivate var countAll: Int {
-        return numberArray.reduce(0) { count, number in
+        return numbers.reduce(0) { count, number in
             // (0)はcountの初期値
             // countに要素を加えた結果を新たにcountとする
             count + number
@@ -194,7 +194,7 @@ struct Coupons {
         var total = 0
         for i in 0..<Coupon.count {
             let discount = Coupon.init(rawValue: i)?.discountValue
-            total += discount! * numberArray[i]
+            total += discount! * numbers[i]
         }
         return total
     }
@@ -306,7 +306,7 @@ class SelectOptimumCombination {
             useOnlyNormalCoupon()
         }
         
-        return selectedCoupons.numberArray
+        return selectedCoupons.numbers
     }
     
     // 使用するクーポンと持っている枚数を渡して値引きするメソッド
@@ -347,7 +347,7 @@ class SelectOptimumCombination {
     
     // ピザクーポンが使えるかどうかを返す
     private var isCanUsePizzaCoupon: Bool {
-        for food in myOrder.orderArray {
+        for food in myOrder.orders {
             // 型判定
             // どっちでもできる
 //            if food is Pizza {
@@ -364,7 +364,7 @@ class SelectOptimumCombination {
     
     // 使用するクーポンの合計枚数を得る
     private var countCoupons: Int {
-        return selectedCoupons.numberArray.reduce(0) { count, number in
+        return selectedCoupons.numbers.reduce(0) { count, number in
             // (0)はcountの初期値
             // countに要素を加えた結果を新たにcountとする
             count + number
