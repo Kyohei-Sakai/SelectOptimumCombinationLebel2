@@ -408,39 +408,6 @@ class SelectOptimumCombination {
 }
 
 
-// テストコード
-
-/*
-// フル機能
-let myOrder = Order()
-myOrder.pizzaOrder(name: .genovese, size: .large, number: 1)
-myOrder.sideMenuOrder(name: .frenchFries, number: 1)
-//myOrder.SideMenuOrder(name: .GreenSalad, number: 1)
-myOrder.sideMenuOrder(name: .caesarSalad, number: 1)
-myOrder.pizzaOrder(name: .margherita, size: .middle, number: 1)
-
-myOrder.orderCheck()
-myOrder.totalFee
-
-let myCoupons = Coupons(coupon1: 3, coupon2: 3, coupon3: 4, pizzaCoupon: 2)
-
-let mySelect = SelectOptimumCombination(order: myOrder, coupons: myCoupons)
-//mySelect.useCoupon(typeOf: .coupon1, number: 3)
-mySelect.selectCoupons
-//mySelect.useCoupon(typeOf: .coupon2, number: 3)
-//mySelect.useOnlyNormalCoupon()
-//mySelect.useAllCoupon()
-print("支払額: \(mySelect.pay)")
-print("値引額: \(mySelect.discount)")
-*/
-
-
-// テスト
-var orders: [Food] = []
-
-orders.append(Pizza(type: .genovese, size: .large))
-orders.append(SideMenu(type: .caesarSalad))
-
 
 // アクセスレベルを意識して、最低限使う機能のみでテスト
 let myOrder = Order()
