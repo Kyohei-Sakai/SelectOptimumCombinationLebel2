@@ -5,6 +5,15 @@
 
 import UIKit
 
+// Stringを拡張
+extension String {
+    var upperCamelCase: String {
+        
+        return ""
+    }
+}
+
+
 // MARK: - オーダーに関する処理と商品情報
 
 protocol Food {
@@ -96,6 +105,7 @@ class SideMenu: Food {
     }
     
 }
+
 
 class Order {
     fileprivate var orders: [Food] = []
