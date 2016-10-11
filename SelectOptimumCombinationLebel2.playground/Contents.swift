@@ -7,37 +7,6 @@ import UIKit
 
 // MARK: - オーダーに関する処理と商品情報
 
-//fileprivate struct Menu {
-//    fileprivate var type: Food
-//    fileprivate var detail: String
-//    fileprivate var price: Int
-//    fileprivate var number: Int
-//    
-//    // オーダーがピザの場合
-//    init(pizza: Pizza, size: PizzaSize, number: Int) {
-//        type = .pizza
-//        self.number = number
-//        
-//        detail = pizza.name + " " + size.name
-//        
-//        price = pizza.getPrice(size: size)
-//    }
-//    
-//    // オーダーがサイドメニューの場合
-//    init(sideMenu: SideMenu, number: Int) {
-//        type = .sideMenu
-//        self.number = number
-//        
-//        detail = sideMenu.name
-//        
-//        price = sideMenu.price
-//    }
-//    
-//}
-
-
-////////////////////////////
-
 protocol Food {
     var name: String { get }
     var price: Int { get }
@@ -154,7 +123,6 @@ class Order {
     
 }
 
-////////////////////////////
 
 
 // MARK: - クーポンの情報
