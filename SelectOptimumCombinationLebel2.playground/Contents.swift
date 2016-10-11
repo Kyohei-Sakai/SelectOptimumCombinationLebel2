@@ -18,31 +18,18 @@ class Pizza: Food {
     var size: PizzaSize
     
     var name: String {
-        switch self.type {
-        case .genovese:
-            return "Genovese"
-        case .margherita:
-            return "Margherita"
+        switch type {
+        case .genovese: return "Genovese"
+        case .margherita: return "Margherita"
         }
     }
     
     var price: Int {
-        switch self.type {
-        case .genovese:
-            switch size {
-            case .middle:
-                return 1000
-            case .large:
-                return 1400
-            }
-            
-        case .margherita:
-            switch size {
-            case .middle:
-                return 1200
-            case .large:
-                return 1800
-            }
+        switch (type, size) {
+        case (.genovese, .middle): return 1000
+        case (.genovese, .large): return 1400
+        case (.margherita, .middle): return 1200
+        case (.margherita, .large): return 1800
         }
     }
     
@@ -66,24 +53,18 @@ class SideMenu: Food {
     var type: SideMenuType
     
     var price: Int {
-        switch self.type {
-        case .frenchFries:
-            return 400
-        case .greenSalad:
-            return 500
-        case .caesarSalad:
-            return 600
+        switch type {
+        case .frenchFries: return 400
+        case .greenSalad: return 500
+        case .caesarSalad: return 600
         }
     }
     
     var name: String {
-        switch self.type {
-        case .frenchFries:
-            return "FrenchFries"
-        case .greenSalad:
-            return "GreenSalad"
-        case .caesarSalad:
-            return "CaesarSalad"
+        switch type {
+        case .frenchFries: return "FrenchFries"
+        case .greenSalad: return "GreenSalad"
+        case .caesarSalad: return "CaesarSalad"
         }
     }
     
