@@ -7,183 +7,131 @@ import UIKit
 
 // MARK: - オーダーに関する処理と商品情報
 
-fileprivate struct Menu {
-    fileprivate var type: Food
-    fileprivate var detail: String
-    fileprivate var price: Int
-    fileprivate var number: Int
+protocol Food {
+    var name: String { get }
+    var price: Int { get }
+}
+
+
+class Pizza: Food {
+    var type: PizzaType
+    var size: PizzaSize
     
-    // オーダーがピザの場合
-    init(pizza: Pizza, size: PizzaSize, number: Int) {
-        type = .pizza
-        self.number = number
-        
-        detail = pizza.name + " " + size.name
-        
-        price = pizza.getPrice(size: size)
+    var name: String {
+        switch type {
+        case .genovese: return "Genovese"
+        case .margherita: return "Margherita"
+        }
     }
     
-    // オーダーがサイドメニューの場合
-    init(sideMenu: SideMenu, number: Int) {
-        type = .sideMenu
-        self.number = number
-        
-        detail = sideMenu.name
-        
-        price = sideMenu.price
+    var price: Int {
+        switch (type, size) {
+        case (.genovese, .middle): return 1000
+        case (.genovese, .large): return 1400
+        case (.margherita, .middle): return 1200
+        case (.margherita, .large): return 1800
+        }
+    }
+    
+    init(type: PizzaType, size: PizzaSize) {
+        self.type = type
+        self.size = size
+    }
+    
+    enum PizzaType {
+        case genovese, margherita
+    }
+    
+    enum PizzaSize {
+        case middle, large
     }
     
 }
 
 
-fileprivate enum Food {
-    case pizza, sideMenu
-}
-
-
-enum PizzaSize {
-    case middle, large
+class SideMenu: Food {
+    var type: SideMenuType
     
-    fileprivate var name: String {
-        switch self {
-        case .middle:
-            return "Middle"
-        case .large:
-            return "Large"
+    var price: Int {
+        switch type {
+        case .frenchFries: return 400
+        case .greenSalad: return 500
+        case .caesarSalad: return 600
         }
+    }
+    
+    var name: String {
+        switch type {
+        case .frenchFries: return "FrenchFries"
+        case .greenSalad: return "GreenSalad"
+        case .caesarSalad: return "CaesarSalad"
+        }
+    }
+    
+    init(type: SideMenuType) {
+        self.type = type
+    }
+    
+    enum SideMenuType {
+        case frenchFries, greenSalad, caesarSalad
     }
     
 }
-
-
-enum Pizza {
-    case genovese, margherita
-    
-    fileprivate func getPrice(size: PizzaSize) -> Int {
-        switch self {
-        case .genovese:
-            
-            switch size {
-            case .middle:
-                return 1000
-            case .large:
-                return 1400
-            }
-            
-        case .margherita:
-            switch size {
-            case .middle:
-                return 1200
-            case .large:
-                return 1800
-            }
-        }
-    }
-    
-    fileprivate var name: String {
-        switch self {
-        case .genovese:
-            return "Genovese"
-        case .margherita:
-            return "Margherita"
-        }
-    }
-    
-}
-
-
-enum SideMenu {
-    case frenchFries, greenSalad, caesarSalad
-    
-    fileprivate var price: Int {
-        switch self {
-        case .frenchFries:
-            return 400
-        case .greenSalad:
-            return 500
-        case .caesarSalad:
-            return 600
-        }
-    }
-    
-    fileprivate var name: String {
-        switch self {
-        case .frenchFries:
-            return "FrenchFries"
-        case .greenSalad:
-            return "GreenSalad"
-        case .caesarSalad:
-            return "CaesarSalad"
-        }
-    }
-}
-
 
 class Order {
-    fileprivate var orderArray: [Menu] = []
+    fileprivate var orders: [Food] = []
     
-    // ピザをオーダーを追加するメソッド
-    func pizzaOrder(name: Pizza, size: PizzaSize, number: Int) {
-        let order = Menu(pizza: name, size: size, number: number)
-        orderArray.append(order)
-    }
-    
-    // サイドメニューをオーダーするメソッド
-    func sideMenuOrder(name: SideMenu, number: Int) {
-        let order = Menu(sideMenu: name, number: number)
-        orderArray.append(order)
+    // 商品の注文をする
+    func requestOrder(food: Food, number: Int) {
+        for _ in 0..<number {
+            orders.append(food)
+        }
     }
     
     // オーダーの合計金額を返すメソッド
     fileprivate var totalFee: Int {
-        
-        var total = 0
-        
-        for i in orderArray {
-            total += i.price * i.number
+        return orders.reduce(0) { total, food in
+            total + food.price
         }
-        
-        return total
     }
     
     // オーダーをリストアップするメソッド
     fileprivate func orderCheck() {
-        
-        for i in orderArray {
-            print("\(i.detail) ×\(i.number)")
+        for i in orders {
+            print("\(i.name)")
         }
-        
     }
     
 }
+
 
 
 // MARK: - クーポンの情報
 
 struct Coupons {
-    fileprivate var numberArray: [Int]
+    fileprivate var numbers: [Int]
     
     init() {
-        numberArray = Array(repeating: 0, count: Coupon.count)
+        numbers = Array(repeating: 0, count: Coupon.count)
     }
     
     init(coupon1: Int, coupon2: Int, coupon3: Int, pizzaCoupon: Int) {
-        numberArray = [coupon1, coupon2, coupon3, pizzaCoupon]
+        numbers = [coupon1, coupon2, coupon3, pizzaCoupon]
     }
     
     // クーポンの枚数を変更する
     fileprivate mutating func alterValue(typeOf coupon: Coupon, value: Int) {
-        numberArray[coupon.hashValue] = value
+        numbers[coupon.hashValue] = value
     }
     
     // 指定したクーポンの枚数を返す
     fileprivate func getNumber(of coupon: Coupon) -> Int {
-        return numberArray[coupon.hashValue]
+        return numbers[coupon.hashValue]
     }
     
     // クーポンの合計枚数を返す
     fileprivate var countAll: Int {
-        return numberArray.reduce(0) { count, number in
+        return numbers.reduce(0) { count, number in
             // (0)はcountの初期値
             // countに要素を加えた結果を新たにcountとする
             count + number
@@ -195,7 +143,7 @@ struct Coupons {
         var total = 0
         for i in 0..<Coupon.count {
             let discount = Coupon.init(rawValue: i)?.discountValue
-            total += discount! * numberArray[i]
+            total += discount! * numbers[i]
         }
         return total
     }
@@ -307,7 +255,7 @@ class SelectOptimumCombination {
             useOnlyNormalCoupon()
         }
         
-        return selectedCoupons.numberArray
+        return selectedCoupons.numbers
     }
     
     // 使用するクーポンと持っている枚数を渡して値引きするメソッド
@@ -348,8 +296,15 @@ class SelectOptimumCombination {
     
     // ピザクーポンが使えるかどうかを返す
     private var isCanUsePizzaCoupon: Bool {
-        for menu in myOrder.orderArray {
-            if menu.type == Food.pizza {
+        for food in myOrder.orders {
+            // 型判定
+            // どっちでもできる
+//            if food is Pizza {
+//                return true
+//            }
+            
+            // foodがPizzaにキャストできれば変数のの中に格納される
+            if let _ = food as? Pizza {
                 return true
             }
         }
@@ -358,7 +313,7 @@ class SelectOptimumCombination {
     
     // 使用するクーポンの合計枚数を得る
     private var countCoupons: Int {
-        return selectedCoupons.numberArray.reduce(0) { count, number in
+        return selectedCoupons.numbers.reduce(0) { count, number in
             // (0)はcountの初期値
             // countに要素を加えた結果を新たにcountとする
             count + number
@@ -402,45 +357,18 @@ class SelectOptimumCombination {
 }
 
 
-// テストコード
-
-/*
-// フル機能
-let myOrder = Order()
-myOrder.pizzaOrder(name: .genovese, size: .large, number: 1)
-myOrder.sideMenuOrder(name: .frenchFries, number: 1)
-//myOrder.SideMenuOrder(name: .GreenSalad, number: 1)
-myOrder.sideMenuOrder(name: .caesarSalad, number: 1)
-myOrder.pizzaOrder(name: .margherita, size: .middle, number: 1)
-
-myOrder.orderCheck()
-myOrder.totalFee
-
-let myCoupons = Coupons(coupon1: 3, coupon2: 3, coupon3: 4, pizzaCoupon: 2)
-
-let mySelect = SelectOptimumCombination(order: myOrder, coupons: myCoupons)
-//mySelect.useCoupon(typeOf: .coupon1, number: 3)
-mySelect.selectCoupons
-//mySelect.useCoupon(typeOf: .coupon2, number: 3)
-//mySelect.useOnlyNormalCoupon()
-//mySelect.useAllCoupon()
-print("支払額: \(mySelect.pay)")
-print("値引額: \(mySelect.discount)")
-*/
-
 
 // アクセスレベルを意識して、最低限使う機能のみでテスト
-
 let myOrder = Order()
-myOrder.pizzaOrder(name: .genovese, size: .large, number: 1)
-myOrder.sideMenuOrder(name: .frenchFries, number: 1)
-myOrder.sideMenuOrder(name: .caesarSalad, number: 1)
-myOrder.pizzaOrder(name: .margherita, size: .middle, number: 1)
+
+myOrder.requestOrder(food: Pizza(type: .genovese, size: .large), number: 1)
+myOrder.requestOrder(food: Pizza(type: .margherita, size: .middle), number: 2)
+myOrder.requestOrder(food: SideMenu(type: .frenchFries), number: 2)
 
 let myCoupons = Coupons(coupon1: 3, coupon2: 3, coupon3: 4, pizzaCoupon: 2)
 
 let mySelect = SelectOptimumCombination(order: myOrder, coupons: myCoupons)
-mySelect.selectCoupons()
+mySelect.selectCoupons
 
 
 
