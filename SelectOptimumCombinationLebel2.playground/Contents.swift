@@ -9,7 +9,13 @@ import UIKit
 extension String {
     var upperCamelCase: String {
         
-        return ""
+        let startIndex = self.startIndex
+        let secondindex = self.index(after: startIndex)
+        
+        let first = self.substring(with: startIndex..<secondindex)
+        let other = self.substring(from: secondindex)
+        
+        return first.uppercased() + other
     }
 }
 
@@ -27,12 +33,7 @@ class Pizza: Food {
     var size: PizzaSize
     
     var name: String {
-        switch self.type {
-        case .genovese:
-            return "Genovese"
-        case .margherita:
-            return "Margherita"
-        }
+        return self.type.rawValue.upperCamelCase
     }
     
     var price: Int {
@@ -60,11 +61,11 @@ class Pizza: Food {
         self.size = size
     }
     
-    enum PizzaType {
+    enum PizzaType: String {
         case genovese, margherita
     }
     
-    enum PizzaSize {
+    enum PizzaSize: String {
         case middle, large
     }
     
@@ -86,21 +87,14 @@ class SideMenu: Food {
     }
     
     var name: String {
-        switch self.type {
-        case .frenchFries:
-            return "FrenchFries"
-        case .greenSalad:
-            return "GreenSalad"
-        case .caesarSalad:
-            return "CaesarSalad"
-        }
+        return self.type.rawValue.upperCamelCase
     }
     
     init(type: SideMenuType) {
         self.type = type
     }
     
-    enum SideMenuType {
+    enum SideMenuType: String {
         case frenchFries, greenSalad, caesarSalad
     }
     
