@@ -5,6 +5,21 @@
 
 import UIKit
 
+// Stringを拡張
+extension String {
+    var upperCamelCase: String {
+        
+        let startIndex = self.startIndex
+        let secondindex = self.index(after: startIndex)
+        
+        let first = self.substring(with: startIndex..<secondindex)
+        let other = self.substring(from: secondindex)
+        
+        return first.uppercased() + other
+    }
+}
+
+
 // MARK: - オーダーに関する処理と商品情報
 
 protocol Food {
@@ -18,10 +33,7 @@ class Pizza: Food {
     var size: PizzaSize
     
     var name: String {
-        switch type {
-        case .genovese: return "Genovese"
-        case .margherita: return "Margherita"
-        }
+        return self.type.rawValue.upperCamelCase
     }
     
     var price: Int {
@@ -38,11 +50,11 @@ class Pizza: Food {
         self.size = size
     }
     
-    enum PizzaType {
+    enum PizzaType: String {
         case genovese, margherita
     }
     
-    enum PizzaSize {
+    enum PizzaSize: String {
         case middle, large
     }
     
@@ -61,22 +73,19 @@ class SideMenu: Food {
     }
     
     var name: String {
-        switch type {
-        case .frenchFries: return "FrenchFries"
-        case .greenSalad: return "GreenSalad"
-        case .caesarSalad: return "CaesarSalad"
-        }
+        return self.type.rawValue.upperCamelCase
     }
     
     init(type: SideMenuType) {
         self.type = type
     }
     
-    enum SideMenuType {
+    enum SideMenuType: String {
         case frenchFries, greenSalad, caesarSalad
     }
     
 }
+
 
 class Order {
     fileprivate var orders: [Food] = []
